@@ -11,7 +11,6 @@
       height: 100vh;
       font-family: 'Segoe UI', sans-serif;
       position: relative;
-      cursor: pointer;
     }
 
     .start-screen {
@@ -23,9 +22,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      flex-direction: column;
       z-index: 20;
       text-align: center;
+      padding: 20px;
+    }
+
+    .start-screen button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 18px;
+      background: #ff4dd2;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 15px #ff4dd2;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
     }
 
     .center-te-amo {
@@ -89,16 +108,21 @@
 </head>
 <body>
 
-  <div class="start-screen" id="startScreen">Toca para comenzar 💖</div>
+  <div class="start-screen" id="startScreen">
+    <div>Para ti, mi Lunita 💖</div>
+    <button id="startBtn">Tocar para comenzar y activar sonido 🎵</button>
+  </div>
+
   <div class="center-te-amo" id="mainText">Te amo</div>
   <div class="rain-container" id="rain"></div>
 
   <audio id="music" preload="auto" loop>
-    <source src="zzz.mp3" type="audio/mpeg">
+    <source src="zzz.mp3" type="audio/mpeg" />
     Tu navegador no soporta audio.
   </audio>
 
   <script>
+    const startBtn = document.getElementById('startBtn');
     const startScreen = document.getElementById('startScreen');
     const mainText = document.getElementById('mainText');
     const rain = document.getElementById('rain');
@@ -117,17 +141,15 @@
       setTimeout(() => text.remove(), 2000);
     }
 
-    function startLoveScene(e) {
+    function startLoveScene() {
       startScreen.style.display = 'none';
       mainText.style.display = 'block';
       rain.style.display = 'block';
 
-      // Reproduce música dentro de evento de interacción
-      music.play().catch((err) => {
-        console.warn("Error reproduciendo música:", err);
-      });
+      // Reproducir música después de toque directo
+      music.play().catch(err => console.warn("No se pudo reproducir:", err));
 
-      // Inicia lluvia
+      // Iniciar lluvia de "te amo"
       setInterval(() => {
         const drop = document.createElement('div');
         drop.classList.add('drop');
@@ -138,20 +160,12 @@
         rain.appendChild(drop);
         setTimeout(() => drop.remove(), 5000);
       }, 150);
-
-      // Mostrar "te amo" donde tocó
-      if (e.touches && e.touches.length > 0) {
-        showTapTeAmo(e.touches[0].clientX, e.touches[0].clientY);
-      } else {
-        showTapTeAmo(e.clientX, e.clientY);
-      }
     }
 
-    // Al primer toque/clic
-    startScreen.addEventListener('click', startLoveScene);
-    startScreen.addEventListener('touchstart', startLoveScene);
+    // Activar todo con botón
+    startBtn.addEventListener('click', startLoveScene);
 
-    // Mostrar "te amo" en cada toque posterior
+    // Mostrar "te amo" en cada toque
     document.body.addEventListener('click', (e) => {
       if (startScreen.style.display === 'none') {
         showTapTeAmo(e.clientX, e.clientY);
